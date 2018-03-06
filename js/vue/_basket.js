@@ -20,15 +20,15 @@ Vue.http.interceptors.push((request, next) => {
 var baskets = Helpers.getElems('[data-module="basket"]');
 var siteNavAlerts = Helpers.getElems('.js-site-nav__alert');
 
-if(baskets.length) {
+if (baskets.length) {
 
 	// Loop each instance
-	Helpers.loopElems(baskets, function() {
+	Helpers.loopElems(baskets, function () {
 
 		const basket = this;
-        const basketData = basket.dataset;
+		const basketData = basket.dataset;
 
-        new Vue({
+		new Vue({
 			el: basket,
 			data: {
 				currencySymbol: '£',
@@ -110,23 +110,23 @@ if(baskets.length) {
 
 				billingAddress(val) {
 					const self = this;
-					
+
 					if (!val) {
 						self.address1 = '',
-						self.address2 = '',
-						self.address3 = '',
-						self.city = '',
-						self.county = '',
-						self.postcode = '',
-						self.country = ''
+							self.address2 = '',
+							self.address3 = '',
+							self.city = '',
+							self.county = '',
+							self.postcode = '',
+							self.country = ''
 					} else {
 						self.address1 = basketData.address1,
-						self.address2 = basketData.address2,
-						self.address3 = basketData.address3,
-						self.city = basketData.city,
-						self.county = basketData.county,
-						self.postcode = basketData.postcode,
-						self.country = basketData.country
+							self.address2 = basketData.address2,
+							self.address3 = basketData.address3,
+							self.city = basketData.city,
+							self.county = basketData.county,
+							self.postcode = basketData.postcode,
+							self.country = basketData.country
 					}
 				}
 			},
@@ -135,20 +135,20 @@ if(baskets.length) {
 
 				// Build total price
 				totalPrice() {
-					
+
 					const self = this;
 
-		        	var price = 0;
+					var price = 0;
 
-		        	for (let id of self.checkedMemberships) {
-		        		price += self.getPrice(parseInt(id, 10), 'membership');
-		        	}
+					for (let id of self.checkedMemberships) {
+						price += self.getPrice(parseInt(id, 10), 'membership');
+					}
 
-		        	for (let id of self.checkedDonations) {
-		        		price += self.getPrice(parseInt(id, 10), 'donation');
-		        	}
+					for (let id of self.checkedDonations) {
+						price += self.getPrice(parseInt(id, 10), 'donation');
+					}
 
-		        	return price;
+					return price;
 				},
 
 				// Human format price
@@ -158,7 +158,7 @@ if(baskets.length) {
 
 					return self.currencySymbol + (self.totalPrice / 100).toFixed(2);
 				},
-				
+
 				// Keep card details data up to date
 				cardDetails() {
 
@@ -170,12 +170,12 @@ if(baskets.length) {
 						'exp_month': self.expiryMonth,
 						'exp_year': self.expiryYear,
 						'cvc': self.cvc,
-				        'address_line1': self.address1,
-				        'address_line2': self.address2 + ' ' + self.address3,
-				        'address_city': self.city,
-				        'address_state': self.county,
+						'address_line1': self.address1,
+						'address_line2': self.address2 + ' ' + self.address3,
+						'address_city': self.city,
+						'address_state': self.county,
 						'address_zip': self.postcode,
-				        'address_country': self.country,
+						'address_country': self.country,
 					};
 
 					// Globally store a flag for if this is a stripe customer
@@ -207,18 +207,18 @@ if(baskets.length) {
 
 				// Select all line item's checkboxes
 				selectAll() {
-					
+
 					const self = this;
 
 					self.deselectAll();
-					
-			    	for (let membership of self.memberships) {
-			    		self.checkedMemberships.push(membership.id);
-			    	}
-					
-			    	for (let donation of self.donations) {
-			    		self.checkedDonations.push(donation.id);
-			    	}
+
+					for (let membership of self.memberships) {
+						self.checkedMemberships.push(membership.id);
+					}
+
+					for (let donation of self.donations) {
+						self.checkedDonations.push(donation.id);
+					}
 
 					// Set button display state
 					self.selectionState = 'selected';
@@ -226,7 +226,7 @@ if(baskets.length) {
 
 				// Deselect all line item's checkboxes
 				deselectAll() {
-					
+
 					const self = this;
 
 					self.checkedMemberships.splice(0);
@@ -239,7 +239,7 @@ if(baskets.length) {
 				displayError(errorMessage) {
 
 					const self = this;
-					
+
 					// Push error text and a negative CSS modifier
 					self.buttonState.push('button--color-red');
 					self.buttonText = errorMessage;
@@ -279,20 +279,20 @@ if(baskets.length) {
 						donations: self.checkedDonations,
 						enteredPostcode: self.postcode
 					})
-			    	.then((response) => {
+						.then((response) => {
 
-						// Redirect the user if all went well
-						if (response.body.statusCode === 200) {
-							return window.location.href = '/orders/' + response.body.order_id;
-						}
+							// Redirect the user if all went well
+							if (response.body.statusCode === 200) {
+								return window.location.href = '/orders/' + response.body.order_id;
+							}
 
-						// Otherwise, fire off the error handler
-						self.displayError(response.body.message);
+							// Otherwise, fire off the error handler
+							self.displayError(response.body.message);
 
-					})
-					.catch((error) => {
-						return alert(error.body.statusText);
-					});
+						})
+						.catch((error) => {
+							return alert(error.body.statusText);
+						});
 
 				},
 
@@ -308,27 +308,27 @@ if(baskets.length) {
 						self.errors = response.error.message;
 
 						// Set negative button states
-					    self.buttonDisabled = false;
+						self.buttonDisabled = false;
 						self.buttonText = 'Confirm & Pay (' + self.formattedPrice + ')';
 
 						// Fire off the error handler
 						self.displayError(response.error.message);
 
-					    return false;
+						return false;
 					}
-					
+
 					// All is well, so set stripe token and process order
 					self.stripeToken = response.id;
 					return self.processOrder(true, true);
 				},
-				
+
 				// Attempt to "pre-auth" with stripe to get a token
 				pay() {
 
 					const self = this;
 
 					// Don't allow multiple post-backs (user could still press enter)
-					if(self.buttonDisabled) {
+					if (self.buttonDisabled) {
 						return;
 					}
 
@@ -343,14 +343,14 @@ if(baskets.length) {
 
 					// Post out to Strip and receive with the response handler
 					return Stripe.card.createToken(self.cardDetails, self.stripeResponseHandler);
-					
+
 				},
 
 				// Attempt to load a membership
 				getMembershipById(id) {
 
 					const self = this;
-					
+
 					return self.memberships.find(membership => membership.id === id);
 				},
 
@@ -373,20 +373,20 @@ if(baskets.length) {
 
 							const membershipItem = self.getMembershipById(id);
 
-							if(typeof(membershipItem) !== 'undefined') {
+							if (typeof (membershipItem) !== 'undefined') {
 								price = membershipItem.level.price;
 							}
-							
+
 							break;
 
 						case 'donation':
 
 							const donationItem = self.getDonationById(id);
 
-							if(typeof(donationItem) !== 'undefined') {
+							if (typeof (donationItem) !== 'undefined') {
 								price = donationItem.amount;
 							}
-							
+
 							break;
 					}
 
@@ -397,8 +397,8 @@ if(baskets.length) {
 				updateCheckedItems(evt, id, type) {
 
 					const self = this;
-					
-					switch(type) {
+
+					switch (type) {
 
 						case 'membership':
 
@@ -419,7 +419,7 @@ if(baskets.length) {
 					const self = this;
 
 					var url = '';
-					switch(type) {
+					switch (type) {
 
 						case 'membership':
 
@@ -427,23 +427,23 @@ if(baskets.length) {
 							url = '/horse-membership/' + id;
 
 							// Confirm the action
-							if(!confirm('Are you sure you want to delete this membership?')) {
+							if (!confirm('Are you sure you want to delete this membership?')) {
 								return;
 							}
 
 							// Remove from local checked collection
 							self.checkedMemberships.splice(self.checkedMemberships.indexOf(id), 1);
-							
+
 							// Loop the memberships and delete the version we want to delete
-							for(let i = 0; i < self.memberships.length; i++) {
-								if(self.memberships[i].id === id) {
+							for (let i = 0; i < self.memberships.length; i++) {
+								if (self.memberships[i].id === id) {
 									self.memberships.splice(i, 1);
 								}
 							}
 
 							// Update the nav alert
 							self.updateSiteNavAlert('horses');
-							
+
 							break;
 
 						case 'donation':
@@ -452,7 +452,7 @@ if(baskets.length) {
 							url = '/donations/' + id;
 
 							// Confirm the action
-							if(!confirm('Are you sure you want to delete this donation?')) {
+							if (!confirm('Are you sure you want to delete this donation?')) {
 								return;
 							}
 
@@ -460,8 +460,8 @@ if(baskets.length) {
 							self.checkedDonations.splice(self.checkedDonations.indexOf(id), 1);
 
 							// Loop the donations and delete the version we want to delete
-							for(let i = 0; i < self.donations.length; i++) {
-								if(self.donations[i].id === id) {
+							for (let i = 0; i < self.donations.length; i++) {
+								if (self.donations[i].id === id) {
 									self.donations.splice(i, 1);
 								}
 							}
@@ -474,34 +474,34 @@ if(baskets.length) {
 
 					// Post out to the respective route
 					self.$http.delete(url)
-							.then(() => {
-								console.log('Item successfully deleted');
-							})
-							.catch((error) => {
-								console.error(error);
-							});
+						.then(() => {
+							console.log('Item successfully deleted');
+						})
+						.catch((error) => {
+							console.error(error);
+						});
 				},
 
 				// Attempt to update site nav alert based on basket updates
 				updateSiteNavAlert(key) {
-					
+
 					const self = this;
 
 					// Loop each alert item
-					for(let siteNavAlert of siteNavAlerts) {
-						
-						if(siteNavAlert.dataset.key === key) {
-							
+					for (let siteNavAlert of siteNavAlerts) {
+
+						if (siteNavAlert.dataset.key === key) {
+
 							var currentCount = 0;
 							var newCount = 0;
 
 							// Get the current count
-							if(typeof(siteNavAlert.dataset.currentCount) !== 'undefined') {
+							if (typeof (siteNavAlert.dataset.currentCount) !== 'undefined') {
 								currentCount = parseInt(siteNavAlert.dataset.currentCount, 10);
 							}
 
 							// Get a count from the relative collection
-							switch(key) {
+							switch (key) {
 								case 'horses':
 
 									newCount = self.memberships.length;
@@ -513,11 +513,11 @@ if(baskets.length) {
 							}
 
 							// Add the other count (horses waiting for approval etc)
-							if(typeof(siteNavAlert.dataset.otherCount) !== 'undefined') {
+							if (typeof (siteNavAlert.dataset.otherCount) !== 'undefined') {
 								newCount += parseInt(siteNavAlert.dataset.otherCount, 10);
 							}
 
-							if(newCount <= 0) {
+							if (newCount <= 0) {
 
 								// TODO: we need to find the parent in a more scalable way
 								siteNavAlert.parentNode.parentNode.style.display = 'none';
@@ -533,7 +533,7 @@ if(baskets.length) {
 			},
 
 			// Module load
-            created() {
+			created() {
 
 				const self = this;
 
@@ -543,17 +543,17 @@ if(baskets.length) {
 				}
 
 				// Populate memberships
-		    	for (let membership of self.memberships) {
-		    		self.checkedMemberships.push(membership.id);
-		    	}
+				for (let membership of self.memberships) {
+					self.checkedMemberships.push(membership.id);
+				}
 
 
 				// Populate donations
-		    	for (let donation of self.donations) {
-		    		self.checkedDonations.push(donation.id);
-		    	}
+				for (let donation of self.donations) {
+					self.checkedDonations.push(donation.id);
+				}
 
-            }
+			}
 		});
 	});
 

@@ -72,108 +72,121 @@
 </template>
 
 <script>
-    export default {
-        data() {
-            return {
-                categories: [],
-                bulls: [],
-                endpoint: this.type,
-                category: this.$route.params.category || 1,
-                page: this.$route.query.page || 1
-            };
-        },
+export default {
+    data() {
+        return {
+            categories: [],
+            bulls: [],
+            endpoint: this.type,
+            category: this.$route.params.category || 1,
+            page: this.$route.query.page || 1
+        };
+    },
 
-        props: [ 'type' ],
+    props: ["type"],
 
-        mounted() {
-            this.prepareComponent();
-        },
+    mounted() {
+        this.prepareComponent();
+    },
 
-        watch: {
-            type (to, from) {
-                if (to !== from) {
-                    this.endpoint = to;
-                    this.prepareComponent();
-                }
-            },
-
-            '$route' (to, from) {
-                if (to !== from) {
-                    this.category = to.params.category;
-                    this.page = to.query.page;
-                }
-            },
-
-            category (to, from) {
-                if (to !== from) {
-                    this.getBulls();
-                }
-            },
-
-            page (to, from) {
-                if (to !== from) {
-                    this.getBulls();
-                }
+    watch: {
+        type(to, from) {
+            if (to !== from) {
+                this.endpoint = to;
+                this.prepareComponent();
             }
         },
 
-        methods: {
-            prepareComponent() {
+        $route(to, from) {
+            if (to !== from) {
+                this.category = to.params.category;
+                this.page = to.query.page;
+            }
+        },
+
+        category(to, from) {
+            if (to !== from) {
                 this.getBulls();
-            },
+            }
+        },
 
-            getBulls() {
-                var url = '/api/admin/' + this.endpoint;
-                if (typeof this.category !== 'undefined') {
-                    url = url + '/category/' + this.category;
-                }
-
-                if (typeof this.page !== 'undefined') {
-                    url = url + '?page=' + this.page;
-                }
-
-                axios.get(url)
-                     .then(response => {
-                         this.categories = response.data.categories || this.categories;
-                         this.bulls = response.data.bulls;
-                     })
-                     .catch(error => {
-                         window.flash(error.message, 'error');
-                     });
-            },
-
-            getBullUrl(model, id) {
-                return `/${model}/${id}`;
-            },
-
-            getBullEditUrl(model, id) {
-                return `/${model}/${id}/edit`;
-            },
-
-            deleteBull(bull) {
-                if (confirm('Are you sure you want to delete ' + bull.prefix + ' ' + bull.name + '?')) {
-                    axios.delete('/api/admin' + this.getBullUrl(bull.model, bull.id))
-                         .then(response => {
-                             window.flash(response.data.message, 'success');
-                             this.bulls.data = this.bulls.data.filter(item => bull.id != item.id);
-                         })
-                         .catch(error => {
-                             window.flash(error.message, 'error');
-                         });
-                }
-            },
-
-            getCategoryUrl(category) {
-                return `/${this.endpoint}/category/${category}`;
-            },
-
-            getPaginationUrl(page) {
-                return `${this.getCategoryUrl(this.category)}?page=${page}`;
-            },
-
-            capitalise(text) {
-                return text[0].toUpperCase() + text.slice(1);
+        page(to, from) {
+            if (to !== from) {
+                this.getBulls();
             }
         }
+    },
+
+    methods: {
+        prepareComponent() {
+            this.getBulls();
+        },
+
+        getBulls() {
+            var url = "/api/admin/" + this.endpoint;
+            if (typeof this.category !== "undefined") {
+                url = url + "/category/" + this.category;
+            }
+
+            if (typeof this.page !== "undefined") {
+                url = url + "?page=" + this.page;
+            }
+
+            axios
+                .get(url)
+                .then(response => {
+                    this.categories =
+                        response.data.categories || this.categories;
+                    this.bulls = response.data.bulls;
+                })
+                .catch(error => {
+                    window.flash(error.message, "error");
+                });
+        },
+
+        getBullUrl(model, id) {
+            return `/${model}/${id}`;
+        },
+
+        getBullEditUrl(model, id) {
+            return `/${model}/${id}/edit`;
+        },
+
+        deleteBull(bull) {
+            if (
+                confirm(
+                    "Are you sure you want to delete " +
+                        bull.prefix +
+                        " " +
+                        bull.name +
+                        "?"
+                )
+            ) {
+                axios
+                    .delete("/api/admin" + this.getBullUrl(bull.model, bull.id))
+                    .then(response => {
+                        window.flash(response.data.message, "success");
+                        this.bulls.data = this.bulls.data.filter(
+                            item => bull.id != item.id
+                        );
+                    })
+                    .catch(error => {
+                        window.flash(error.message, "error");
+                    });
+            }
+        },
+
+        getCategoryUrl(category) {
+            return `/${this.endpoint}/category/${category}`;
+        },
+
+        getPaginationUrl(page) {
+            return `${this.getCategoryUrl(this.category)}?page=${page}`;
+        },
+
+        capitalise(text) {
+            return text[0].toUpperCase() + text.slice(1);
+        }
     }
+};
 </script>
